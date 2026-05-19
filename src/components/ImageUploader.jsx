@@ -13,47 +13,47 @@ export default function ImageUploader({
   const [error, setError] = useState("");
 
   const handleFileChange = async (e) => {
-    console.log(e.target.files[0]);
     const file = e.target.files[0];
     if (!file) return;
 
-    // // Snappy instant client-side preview URL
-    // setPreviewUrl(URL.createObjectURL(file));
+    // Snappy instant client-side preview URL
+    setPreviewUrl(URL.createObjectURL(file));
     setUploading(true);
     setError("");
 
-    // // Fallback standard user_id if currentUser object hasn't populated ID
+    // Fallback standard user_id if currentUser object hasn't populated ID
     const userId = currentUserId || "69de6fff11fdb981a1af99c5";
 
     try {
-      //   // 1. Call API to retrieve presigned PUT URL and target file path
+      // 1. Call API to retrieve presigned PUT URL and target file path
       const response = await api.get(`upload/signed/url/${userId}`);
-      // console.log(response);
-      //   const { path, presignedUrl } = response.data?.data || {};
-      //   if (!presignedUrl || !path) {
-      //     throw new Error("Invalid presigned URL returned from server.");
-      //   }
-      //   // 2. Perform direct PUT upload to presigned URL using standard axios
-      //   // Note: We MUST use standard axios here to prevent the Authorization Bearer token header
-      //   // from being added, which would violate Cloudflare R2's signature constraints.
-      //   await axios.put(presignedUrl, file, {
-      //     headers: {
-      //       "Content-Type": file.type,
-      //     },
-      //   });
-      //   setUploadedPath(path);
-      //   onUploadSuccess(path);
+      const { path, presignedUrl } = response.data?.data || {};
+
+      if (!presignedUrl || !path) {
+        throw new Error("Invalid presigned URL returned from server.");
+      }
+
+      // 2. Perform direct PUT upload to presigned URL using standard axios
+      // Note: We MUST use standard axios here to prevent the Authorization Bearer token header
+      // from being added, which would violate Cloudflare R2's signature constraints.
+      await axios.put(presignedUrl, file, {
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
+
+      setUploadedPath(path);
+      onUploadSuccess(path);
     } catch (err) {
-      console.error("Image Upload Error:", err.message);
-      // const errMsg =
-      //   err.response?.data?.message || err.message || "Upload failed.";
-      // setError(errMsg);
-      // setPreviewUrl("");
-      // setUploadedPath("");
+      console.error("Image Upload Error:", err);
+      const errMsg =
+        err.response?.data?.message || err.message || "Upload failed.";
+      setError(errMsg);
+      setPreviewUrl("");
+      setUploadedPath("");
+    } finally {
+      setUploading(false);
     }
-    // finally {
-    //   setUploading(false);
-    // }
   };
 
   return (
