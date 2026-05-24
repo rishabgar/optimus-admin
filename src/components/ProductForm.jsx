@@ -1,7 +1,13 @@
-import React, { useState, useMemo } from "react";
+import { useState } from "react";
 import ImageUploader from "./ImageUploader";
 
-export default function ProductForm({ shopTypes, categories, onSubmit }) {
+export default function ProductForm({
+  shopTypes,
+  categories,
+  onShopTypeChange,
+  onCategoryChange,
+  onSubmit,
+}) {
   const [prodShopTypeId, setProdShopTypeId] = useState("");
   const [prodCategoryId, setProdCategoryId] = useState("");
   const [prodName, setProdName] = useState("");
@@ -16,17 +22,12 @@ export default function ProductForm({ shopTypes, categories, onSubmit }) {
   const [prodPrescription, setProdPrescription] = useState(false);
   const [prodType, setProdType] = useState("common");
 
-  // Cascading Filter logic:
-  const filteredCategories = useMemo(() => {
-    if (!prodShopTypeId) return [];
-    return categories.filter(cat => cat.shopTypeId === prodShopTypeId);
-  }, [prodShopTypeId, categories]);
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!prodCategoryId || !prodName || !prodPrice || !prodBrand) return;
 
     onSubmit({
+      shopTypeId: prodShopTypeId,
       categoryId: prodCategoryId,
       name: prodName,
       price: parseFloat(prodPrice),
@@ -40,7 +41,7 @@ export default function ProductForm({ shopTypes, categories, onSubmit }) {
       product_type: prodType,
       is_prescription_required: prodPrescription,
       description: prodDesc,
-      images: prodImgUrl ? [{ url: prodImgUrl, alt: prodName, is_main: true }] : []
+      images: prodImgUrl ? [{ url: prodImgUrl, alt: prodName }] : []
     });
 
     // Reset fields (except Shop Type / Category if user wants to add multiple items, but let's reset to keep it standard)
@@ -66,8 +67,11 @@ export default function ProductForm({ shopTypes, categories, onSubmit }) {
         <select 
           value={prodShopTypeId}
           onChange={(e) => {
-            setProdShopTypeId(e.target.value);
+            const shopTypeId = e.target.value;
+            setProdShopTypeId(shopTypeId);
             setProdCategoryId(""); // Reset cascading child selector
+            onShopTypeChange(shopTypeId);
+            onCategoryChange("");
           }}
           required
         >
@@ -83,14 +87,18 @@ export default function ProductForm({ shopTypes, categories, onSubmit }) {
         <label className="label-md" style={{ color: "var(--on-surface-variant)", display: "block", marginBottom: "0.3rem" }}>2. Product Category</label>
         <select 
           value={prodCategoryId}
-          onChange={(e) => setProdCategoryId(e.target.value)}
+          onChange={(e) => {
+            const categoryId = e.target.value;
+            setProdCategoryId(categoryId);
+            onCategoryChange(categoryId);
+          }}
           disabled={!prodShopTypeId}
           required
         >
           <option value="">
             {!prodShopTypeId ? "<- Select Shop Type first" : "-- Choose Category --"}
           </option>
-          {filteredCategories.map(cat => (
+          {categories.map(cat => (
             <option key={cat.id} value={cat.id}>{cat.name}</option>
           ))}
         </select>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import ImageUploader from "./ImageUploader";
 
 export default function ShopTypeForm({ onSubmit }) {

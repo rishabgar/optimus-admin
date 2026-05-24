@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import ImageUploader from "./ImageUploader";
 
 export default function CategoryForm({ shopTypes, onSubmit }) {
@@ -14,37 +14,74 @@ export default function CategoryForm({ shopTypes, onSubmit }) {
       shopTypeId: catShopTypeId,
       name: catName,
       type: catType,
-      image: catImg
+      image: catImg,
     });
     setCatName("");
     setCatImg("");
   };
 
   return (
-    <form onSubmit={handleSubmit} className="glass-panel" style={{ display: "flex", flexDirection: "column", gap: "1rem", width: "100%", maxWidth: "500px" }}>
-      <h3 className="headline-sm" style={{ fontSize: "1.1rem", borderBottom: "1px solid var(--outline-variant)", paddingBottom: "0.5rem" }}>
+    <form
+      onSubmit={handleSubmit}
+      className="glass-panel"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "1rem",
+        width: "100%",
+        maxWidth: "500px",
+      }}
+    >
+      <h3
+        className="headline-sm"
+        style={{
+          fontSize: "1.1rem",
+          borderBottom: "1px solid var(--outline-variant)",
+          paddingBottom: "0.5rem",
+        }}
+      >
         Create Product Category
       </h3>
 
       <div>
-        <label className="label-md" style={{ color: "var(--on-surface-variant)", display: "block", marginBottom: "0.4rem" }}>Select parent Shop Type</label>
-        <select 
+        <label
+          className="label-md"
+          style={{
+            color: "var(--on-surface-variant)",
+            display: "block",
+            marginBottom: "0.4rem",
+          }}
+        >
+          Select parent Shop Type
+        </label>
+        <select
           value={catShopTypeId}
           onChange={(e) => setCatShopTypeId(e.target.value)}
           required
         >
           <option value="">-- Choose Shop Type --</option>
-          {shopTypes.map(st => (
-            <option key={st.id} value={st.id}>{st.name}</option>
+          {shopTypes.map((st) => (
+            <option key={st.id} value={st.id}>
+              {st.name}
+            </option>
           ))}
         </select>
       </div>
 
       <div>
-        <label className="label-md" style={{ color: "var(--on-surface-variant)", display: "block", marginBottom: "0.4rem" }}>Category Name</label>
-        <input 
-          type="text" 
-          placeholder="e.g. Organic Beverages" 
+        <label
+          className="label-md"
+          style={{
+            color: "var(--on-surface-variant)",
+            display: "block",
+            marginBottom: "0.4rem",
+          }}
+        >
+          Category Name
+        </label>
+        <input
+          type="text"
+          placeholder="e.g. Organic Beverages"
           value={catName}
           onChange={(e) => setCatName(e.target.value)}
           required
@@ -52,11 +89,17 @@ export default function CategoryForm({ shopTypes, onSubmit }) {
       </div>
 
       <div>
-        <label className="label-md" style={{ color: "var(--on-surface-variant)", display: "block", marginBottom: "0.4rem" }}>Category Type</label>
-        <select 
-          value={catType}
-          onChange={(e) => setCatType(e.target.value)}
+        <label
+          className="label-md"
+          style={{
+            color: "var(--on-surface-variant)",
+            display: "block",
+            marginBottom: "0.4rem",
+          }}
         >
+          Category Type
+        </label>
+        <select value={catType} onChange={(e) => setCatType(e.target.value)}>
           <option value="common">Common (Global)</option>
           <option value="individual">Individual (Custom)</option>
         </select>
@@ -67,7 +110,11 @@ export default function CategoryForm({ shopTypes, onSubmit }) {
         onUploadSuccess={(path) => setCatImg(path)}
       />
 
-      <button type="submit" className="btn btn-primary" style={{ width: "100%", marginTop: "0.5rem" }}>
+      <button
+        type="submit"
+        className="btn btn-primary"
+        style={{ width: "100%", marginTop: "0.5rem" }}
+      >
         Add Category
       </button>
     </form>

@@ -1,160 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 import ShopTypeForm from "./components/ShopTypeForm";
 import CategoryForm from "./components/CategoryForm";
 import ProductForm from "./components/ProductForm";
+import ImageUploader from "./components/ImageUploader";
 import AuthPage from "./components/AuthPage";
 import api from "./api/axios";
 
-// const INITIAL_SHOP_TYPES = [
-//   {
-//     id: "st-1",
-//     name: "Grocery Supermarket",
-//     image:
-//       "https://images.unsplash.com/photo-1542838132-92c53300491e?w=80&auto=format&fit=crop&q=60",
-//   },
-//   {
-//     id: "st-2",
-//     name: "Tech & Gadget Hub",
-//     image:
-//       "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=80&auto=format&fit=crop&q=60",
-//   },
-//   {
-//     id: "st-3",
-//     name: "Apex Pharmacy",
-//     image:
-//       "https://images.unsplash.com/photo-1586015555751-63bb77f4322a?w=80&auto=format&fit=crop&q=60",
-//   },
-// ];
+async function getAllShopTypes() {
+  const res = await api.get("shop/type");
+  return res.data;
+}
 
-// const INITIAL_CATEGORIES = [
-//   // Grocery categories
-//   {
-//     id: "cat-1",
-//     shopTypeId: "st-1",
-//     name: "Fresh Fruits & Veg",
-//     type: "common",
-//     image:
-//       "https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=80&auto=format&fit=crop&q=60",
-//   },
-//   {
-//     id: "cat-2",
-//     shopTypeId: "st-1",
-//     name: "Organic Beverages",
-//     type: "common",
-//     image:
-//       "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=80&auto=format&fit=crop&q=60",
-//   },
-//   // Tech categories
-//   {
-//     id: "cat-3",
-//     shopTypeId: "st-2",
-//     name: "Acoustics & Audio",
-//     type: "common",
-//     image:
-//       "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=80&auto=format&fit=crop&q=60",
-//   },
-//   {
-//     id: "cat-4",
-//     shopTypeId: "st-2",
-//     name: "Wearables & Watches",
-//     type: "individual",
-//     image:
-//       "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=80&auto=format&fit=crop&q=60",
-//   },
-//   // Pharmacy categories
-//   {
-//     id: "cat-5",
-//     shopTypeId: "st-3",
-//     name: "OTC Medications",
-//     type: "common",
-//     image:
-//       "https://images.unsplash.com/photo-1584017911766-d451b3d0e843?w=80&auto=format&fit=crop&q=60",
-//   },
-//   {
-//     id: "cat-6",
-//     shopTypeId: "st-3",
-//     name: "Prescription Drugs",
-//     type: "individual",
-//     image:
-//       "https://images.unsplash.com/photo-1586015555751-63bb77f4322a?w=80&auto=format&fit=crop&q=60",
-//   },
-// ];
+async function getCategoriesByShopType(shopTypeId) {
+  const res = await api.get(`categories/shop_type_id/${shopTypeId}`);
+  return res.data;
+}
 
-// const INITIAL_PRODUCTS = [
-//   // Fruits category
-//   {
-//     id: "prod-1",
-//     categoryId: "cat-1",
-//     name: "Organic Honeycrisp Apples",
-//     price: 4.99,
-//     brand: "BioFarms",
-//     weight: 1,
-//     weight_prefix: "kg",
-//     quantity_prefix: "kg",
-//     available_quantity: 42,
-//     reserved_quantity: 2,
-//     availability: true,
-//     type: "common",
-//     description:
-//       "Crispy, sweet organic honeycrisp apples sourced from local orchards.",
-//     is_prescription_required: false,
-//     images: [
-//       {
-//         url: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=120&auto=format&fit=crop&q=60",
-//         is_main: true,
-//       },
-//     ],
-//   },
-//   // Audio category
-//   {
-//     id: "prod-2",
-//     categoryId: "cat-3",
-//     name: "NovaCore Hybrid Headphones",
-//     price: 329.0,
-//     brand: "NovaCore",
-//     weight: 350,
-//     weight_prefix: "g",
-//     quantity_prefix: "pcs",
-//     available_quantity: 12,
-//     reserved_quantity: 0,
-//     availability: true,
-//     type: "common",
-//     description:
-//       "Active noise-cancelling studio headphones with dynamic carbon dome drivers.",
-//     is_prescription_required: false,
-//     images: [
-//       {
-//         url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=120&auto=format&fit=crop&q=60",
-//         is_main: true,
-//       },
-//     ],
-//   },
-//   // Prescription drugs category
-//   {
-//     id: "prod-3",
-//     categoryId: "cat-6",
-//     name: "LipoSync Cardioprotect",
-//     price: 89.99,
-//     brand: "SynRx Laboratories",
-//     weight: 20,
-//     weight_prefix: "mg",
-//     quantity_prefix: "pcs",
-//     available_quantity: 8,
-//     reserved_quantity: 1,
-//     availability: true,
-//     type: "individual",
-//     description:
-//       "Statins cardiovascular therapy. Strictly requires doctor uploads.",
-//     is_prescription_required: true,
-//     images: [
-//       {
-//         url: "https://images.unsplash.com/photo-1584017911766-d451b3d0e843?w=120&auto=format&fit=crop&q=60",
-//         is_main: true,
-//       },
-//     ],
-//   },
-// ];
+async function getProductsByCategory(productCategoryId) {
+  const res = await api.get(`product/admin/${productCategoryId}`);
+  return res.data;
+}
+
+function getApiErrorMessage(error) {
+  const message = error.response?.data?.message || error.message;
+  return Array.isArray(message) ? message.join(", ") : message || "API failed.";
+}
 
 function App() {
   const [currentUser, setCurrentUser] = useState(() => {
@@ -171,16 +42,80 @@ function App() {
   const [shopTypes, setShopTypes] = useState([]);
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
+  const [categoryShopTypeId, setCategoryShopTypeId] = useState("");
+  const [editingItem, setEditingItem] = useState(null);
+  const [editForm, setEditForm] = useState({});
+  const [apiLoadingCount, setApiLoadingCount] = useState(0);
+  const [apiError, setApiError] = useState("");
 
   // Active Tab inside the Seller Dashboard Panel
   const [activeSellerTab, setActiveSellerTab] = useState("shopTypes");
+  const isApiLoading = apiLoadingCount > 0;
+
+  const startApiRequest = () => {
+    setApiError("");
+    setApiLoadingCount((count) => count + 1);
+  };
+
+  const finishApiRequest = () => {
+    setApiLoadingCount((count) => Math.max(0, count - 1));
+  };
+
+  const showApiError = (context, error) => {
+    setApiError(`${context}: ${getApiErrorMessage(error)}`);
+  };
+
+  const fetchShopTypes = async () => {
+    startApiRequest();
+    try {
+      const shopTypesData = await getAllShopTypes();
+      const normalizedShopTypes = (shopTypesData.data || []).map(
+        (shopType) => ({
+          id: shopType.id || shopType._id || shopType.shop_type_id,
+          name: shopType.name || shopType.shop_type_name,
+          image: shopType.image || shopType.shop_type_image,
+        }),
+      );
+      setShopTypes(normalizedShopTypes);
+    } catch (error) {
+      console.error("Failed to fetch shop types:", error);
+      showApiError("Failed to fetch shop types", error);
+    } finally {
+      finishApiRequest();
+    }
+  };
+
+  useEffect(() => {
+    const loadShopTypes = async () => {
+      startApiRequest();
+      try {
+        const shopTypesData = await getAllShopTypes();
+        const normalizedShopTypes = (shopTypesData.data || []).map(
+          (shopType) => ({
+            id: shopType.id || shopType._id || shopType.shop_type_id,
+            name: shopType.name || shopType.shop_type_name,
+            image: shopType.image || shopType.shop_type_image,
+          }),
+        );
+        setShopTypes(normalizedShopTypes);
+      } catch (error) {
+        console.error("Failed to fetch shop types:", error);
+        showApiError("Failed to fetch shop types", error);
+      } finally {
+        finishApiRequest();
+      }
+    };
+
+    loadShopTypes();
+  }, []);
 
   // Shop Type Dispatch Action
   const handleCreateShopType = async ({ name, image }) => {
+    startApiRequest();
     try {
       const response = await api.post("shop/type/create", {
         shop_type_name: name.trim(),
-        shop_type_image: image.trim() || "https://images.unsplash.com/photo-1542838132-92c53300491e?w=80",
+        shop_type_image: image.trim(),
       });
 
       const createdShop = response.data?.data || response.data || {};
@@ -190,26 +125,33 @@ function App() {
         image: createdShop.shop_type_image || image.trim(),
       };
 
-      setShopTypes(prev => [...prev, newShop]);
+      setShopTypes((prev) => [...prev, newShop]);
     } catch (err) {
-      console.warn("Failed to create Shop Type on backend, synchronizing locally...", err);
+      console.warn(
+        "Failed to create Shop Type on backend, synchronizing locally...",
+        err,
+      );
+      showApiError("Failed to create shop type", err);
       const newShop = {
         id: `st-${Date.now()}`,
         name: name.trim(),
-        image: image.trim() || "https://images.unsplash.com/photo-1542838132-92c53300491e?w=80",
+        image: image.trim(),
       };
-      setShopTypes(prev => [...prev, newShop]);
+      setShopTypes((prev) => [...prev, newShop]);
+    } finally {
+      finishApiRequest();
     }
   };
 
   // Product Category Dispatch Action
   const handleCreateCategory = async ({ shopTypeId, name, type, image }) => {
+    startApiRequest();
     try {
-      const response = await api.post("product/category/create", {
+      const response = await api.post("categories/create", {
         shop_type_id: shopTypeId,
         product_category_name: name.trim(),
         product_category_type: type,
-        product_category_image: image.trim() || "https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=80",
+        product_category_image: image.trim(),
       });
 
       const createdCat = response.data?.data || response.data || {};
@@ -221,73 +163,296 @@ function App() {
         image: createdCat.product_category_image || image.trim(),
       };
 
-      setCategories(prev => [...prev, newCategory]);
+      setCategories((prev) => [...prev, newCategory]);
     } catch (err) {
-      console.warn("Failed to create Product Category on backend, synchronizing locally...", err);
+      console.warn(
+        "Failed to create Product Category on backend, synchronizing locally...",
+        err,
+      );
+      showApiError("Failed to create product category", err);
       const newCategory = {
         id: `cat-${Date.now()}`,
         shopTypeId,
         name: name.trim(),
         type,
-        image: image.trim() || "https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=80",
+        image: image.trim(),
       };
-      setCategories(prev => [...prev, newCategory]);
+      setCategories((prev) => [...prev, newCategory]);
+    } finally {
+      finishApiRequest();
+    }
+  };
+
+  // Product Dispatch Action
+  const handleGetCategoriesByShopType = async (shopTypeId) => {
+    if (!shopTypeId) {
+      setCategories([]);
+      setProducts([]);
+      return;
+    }
+
+    startApiRequest();
+    try {
+      const categoriesData = await getCategoriesByShopType(shopTypeId);
+      const normalizedCategories = (categoriesData.data || []).map(
+        (category) => ({
+          id: category.id || category._id || category.product_category_id,
+          shopTypeId: category.shop_type_id || shopTypeId,
+          name: category.name || category.product_category_name,
+          type: category.type || category.product_category_type,
+          image: category.image || category.product_category_image,
+        }),
+      );
+      setCategories(normalizedCategories);
+      setProducts([]);
+    } catch (error) {
+      console.error("Failed to fetch categories by shop type:", error);
+      showApiError("Failed to fetch categories", error);
+    } finally {
+      finishApiRequest();
+    }
+  };
+
+  const handleGetProductsByCategory = async (productCategoryId) => {
+    if (!productCategoryId) {
+      setProducts([]);
+      return;
+    }
+
+    startApiRequest();
+    try {
+      const productsData = await getProductsByCategory(productCategoryId);
+      const productGroups = productsData.data || [];
+      const apiProducts = productGroups.flatMap((group) =>
+        (group.products || []).map((product) => ({
+          ...product,
+          product_category_id: group.product_category_id,
+          shop_type_id: group.shop_type_id,
+        })),
+      );
+      const normalizedProducts = apiProducts.map((product) => ({
+        id: product.id || product._id || product.product_id,
+        categoryId: product.product_category_id || productCategoryId,
+        shopTypeId: product.shop_type_id,
+        name: product.name || product.product_name,
+        price: product.price || product.product_price,
+        brand: product.brand || product.brand_name,
+        weight: product.weight || product.product_weight,
+        weight_prefix: product.weight_prefix,
+        quantity_prefix: product.quantity_prefix,
+        available_quantity:
+          product.available_quantity || product.product_quantity,
+        availability: product.availability,
+        type: product.type || product.product_type,
+        description: product.description || product.product_description,
+        images: product.images || product.product_images || [],
+      }));
+      setProducts(normalizedProducts);
+    } catch (error) {
+      console.error("Failed to fetch products by category:", error);
+      showApiError("Failed to fetch products", error);
+    } finally {
+      finishApiRequest();
     }
   };
 
   // Product Dispatch Action
   const handleCreateProduct = async (productData) => {
+    startApiRequest();
     try {
-      const finalImages = productData.images.length > 0
-        ? productData.images
-        : [{ url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=120", is_main: true }];
+      const finalImages = productData.images;
 
-      const response = await api.post("product/create", {
+      const response = await api.post("product/admin/create", {
         product_name: productData.name.trim(),
-        product_category_id: productData.categoryId,
-        product_images: finalImages,
         product_price: parseFloat(productData.price),
-        product_brand: productData.brand.trim(),
         product_weight: parseFloat(productData.weight) || undefined,
-        product_weight_prefix: productData.weight_prefix,
-        product_quantity_prefix: productData.quantity_prefix,
-        product_available_quantity: parseInt(productData.available_quantity) || 1,
+        product_description: productData.description,
+        brand_name: productData.brand.trim(),
+        product_category_id: productData.categoryId,
+        availability: productData.availability,
+        weight_prefix: productData.weight_prefix,
+        product_quantity: parseInt(productData.available_quantity) || 1,
+        quantity_prefix: productData.quantity_prefix,
         product_type: productData.product_type || "common",
-        is_prescription_required: productData.is_prescription_required || false,
-        product_description: productData.description?.trim(),
+        shop_type_id: productData.shopTypeId,
+        product_images: finalImages,
       });
 
       const createdProd = response.data?.data || response.data || {};
       const newProduct = {
         id: createdProd.id || createdProd._id || `prod-${Date.now()}`,
         categoryId: createdProd.product_category_id || productData.categoryId,
+        shopTypeId: createdProd.shop_type_id || productData.shopTypeId,
         name: createdProd.product_name || productData.name,
         price: createdProd.product_price || productData.price,
-        brand: createdProd.product_brand || productData.brand,
+        brand: createdProd.brand_name || productData.brand,
         weight: createdProd.product_weight || productData.weight,
-        weight_prefix: createdProd.product_weight_prefix || productData.weight_prefix,
-        quantity_prefix: createdProd.product_quantity_prefix || productData.quantity_prefix,
-        available_quantity: createdProd.product_available_quantity || productData.available_quantity,
+        weight_prefix: createdProd.weight_prefix || productData.weight_prefix,
+        quantity_prefix:
+          createdProd.quantity_prefix || productData.quantity_prefix,
+        available_quantity:
+          createdProd.product_quantity || productData.available_quantity,
         reserved_quantity: 0,
-        availability: true,
+        availability: createdProd.availability ?? productData.availability,
         type: createdProd.product_type || productData.product_type,
         description: createdProd.product_description || productData.description,
         images: createdProd.product_images || finalImages,
       };
 
-      setProducts(prev => [...prev, newProduct]);
+      setProducts((prev) => [...prev, newProduct]);
     } catch (err) {
-      console.warn("Failed to register Product on backend, synchronizing locally...", err);
-      const finalImages = productData.images.length > 0
-        ? productData.images
-        : [{ url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=120", is_main: true }];
+      console.warn(
+        "Failed to register Product on backend, synchronizing locally...",
+        err,
+      );
+      showApiError("Failed to create product", err);
+      const finalImages = productData.images;
 
       const newProduct = {
         id: `prod-${Date.now()}`,
         ...productData,
         images: finalImages,
       };
-      setProducts(prev => [...prev, newProduct]);
+      setProducts((prev) => [...prev, newProduct]);
+    } finally {
+      finishApiRequest();
+    }
+  };
+
+  const openEditModal = (kind, item) => {
+    setEditingItem({ kind, id: item.id, original: item });
+    setEditForm({
+      ...item,
+      image: item.image || item.images?.[0]?.url || "",
+      imageAlt: item.images?.[0]?.alt || item.name || "",
+    });
+  };
+
+  const closeEditModal = () => {
+    setEditingItem(null);
+    setEditForm({});
+  };
+
+  const handleEditFormChange = (field, value) => {
+    setEditForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleUpdateItem = async (e) => {
+    e.preventDefault();
+    if (!editingItem) return;
+
+    startApiRequest();
+    try {
+      if (editingItem.kind === "shopType") {
+        await api.put(`shop/type/update/${editingItem.id}`, {
+          shop_type_name: editForm.name.trim(),
+          shop_type_image: editForm.image.trim(),
+        });
+        setShopTypes((prev) =>
+          prev.map((item) =>
+            item.id === editingItem.id
+              ? { ...item, name: editForm.name, image: editForm.image }
+              : item,
+          ),
+        );
+      }
+
+      if (editingItem.kind === "category") {
+        const original = editingItem.original;
+        const categoryPayload = {
+          product_category_id: editingItem.id,
+        };
+
+        if (editForm.name.trim() !== original.name) {
+          categoryPayload.product_category_name = editForm.name.trim();
+        }
+
+        if ((editForm.image || "").trim() !== (original.image || "")) {
+          categoryPayload.product_category_image = (editForm.image || "").trim();
+        }
+
+        await api.patch("categories/update", categoryPayload);
+        setCategories((prev) =>
+          prev.map((item) =>
+            item.id === editingItem.id
+              ? {
+                  ...item,
+                  name: editForm.name,
+                  image: editForm.image,
+                }
+              : item,
+          ),
+        );
+      }
+
+      if (editingItem.kind === "product") {
+        const productImages = editForm.image
+          ? [{ url: editForm.image, alt: editForm.imageAlt || editForm.name }]
+          : [];
+
+        await api.put(`product/admin/update/${editingItem.id}`, {
+          product_name: editForm.name.trim(),
+          product_price: parseFloat(editForm.price),
+          product_weight: parseFloat(editForm.weight) || undefined,
+          product_description: editForm.description,
+          brand_name: editForm.brand.trim(),
+          product_category_id: editForm.categoryId,
+          availability: editForm.availability,
+          weight_prefix: editForm.weight_prefix,
+          product_quantity: parseInt(editForm.available_quantity) || 1,
+          quantity_prefix: editForm.quantity_prefix,
+          product_type: editForm.type,
+          shop_type_id: editForm.shopTypeId,
+          product_images: productImages,
+        });
+        setProducts((prev) =>
+          prev.map((item) =>
+            item.id === editingItem.id
+              ? { ...item, ...editForm, images: productImages }
+              : item,
+          ),
+        );
+      }
+
+      closeEditModal();
+    } catch (error) {
+      console.error("Failed to update item:", error);
+      showApiError("Failed to update item", error);
+    } finally {
+      finishApiRequest();
+    }
+  };
+
+  const handleDeleteItem = async (kind, item) => {
+    if (!window.confirm(`Delete ${item.name}?`)) return;
+
+    startApiRequest();
+    try {
+      if (kind === "shopType") {
+        await api.delete(`shop/type/delete/${item.id}`);
+        setShopTypes((prev) =>
+          prev.filter((shopType) => shopType.id !== item.id),
+        );
+      }
+
+      if (kind === "category") {
+        await api.delete("categories/delete", {
+          data: { product_category_id: item.id },
+        });
+        setCategories((prev) =>
+          prev.filter((category) => category.id !== item.id),
+        );
+      }
+
+      if (kind === "product") {
+        await api.delete(`product/admin/delete/${item.id}`);
+        setProducts((prev) => prev.filter((product) => product.id !== item.id));
+      }
+    } catch (error) {
+      console.error("Failed to delete item:", error);
+      showApiError("Failed to delete item", error);
+    } finally {
+      finishApiRequest();
     }
   };
 
@@ -305,6 +470,60 @@ function App() {
 
   return (
     <div className="split-container">
+      {isApiLoading && (
+        <div
+          style={{
+            position: "fixed",
+            top: "1rem",
+            right: "1rem",
+            zIndex: 100,
+            padding: "0.75rem 1rem",
+            borderRadius: "var(--radius-default)",
+            border: "1px solid var(--outline-variant)",
+            background: "var(--surface-container-high)",
+            color: "var(--on-surface)",
+            fontWeight: 700,
+          }}
+        >
+          Loading...
+        </div>
+      )}
+
+      {apiError && (
+        <div
+          style={{
+            position: "fixed",
+            top: isApiLoading ? "4.25rem" : "1rem",
+            right: "1rem",
+            zIndex: 100,
+            maxWidth: "420px",
+            display: "flex",
+            gap: "0.75rem",
+            alignItems: "flex-start",
+            padding: "0.75rem 1rem",
+            borderRadius: "var(--radius-default)",
+            border: "1px solid rgba(255, 180, 171, 0.35)",
+            background: "var(--surface-container-high)",
+            color: "var(--error)",
+          }}
+        >
+          <span style={{ flex: 1 }}>{apiError}</span>
+          <button
+            type="button"
+            onClick={() => setApiError("")}
+            style={{
+              border: 0,
+              background: "transparent",
+              color: "var(--error)",
+              cursor: "pointer",
+              fontWeight: 800,
+            }}
+          >
+            X
+          </button>
+        </div>
+      )}
+
       <PanelGroup direction="horizontal">
         {/* LEFT COLUMN: Sidebar Navigation Profile Selection */}
         <Panel
@@ -673,11 +892,120 @@ function App() {
                   <div
                     style={{
                       display: "flex",
-                      justifyContent: "center",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "1rem",
                       width: "100%",
                     }}
                   >
                     <ShopTypeForm onSubmit={handleCreateShopType} />
+                    <div
+                      className="glass-panel"
+                      style={{
+                        width: "100%",
+                        maxWidth: "720px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.75rem",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          gap: "0.75rem",
+                          alignItems: "center",
+                        }}
+                      >
+                        <h3
+                          className="headline-sm"
+                          style={{ fontSize: "1.1rem" }}
+                        >
+                          Shop Types
+                        </h3>
+                        <button
+                          type="button"
+                          className="btn"
+                          onClick={fetchShopTypes}
+                          style={{
+                            border: "1px solid var(--outline-variant)",
+                          }}
+                        >
+                          Refresh
+                        </button>
+                      </div>
+
+                      {shopTypes.map((shopType) => (
+                        <div
+                          key={shopType.id}
+                          style={{
+                            display: "grid",
+                            gridTemplateColumns: "52px 1fr auto",
+                            gap: "0.75rem",
+                            alignItems: "center",
+                            padding: "0.75rem",
+                            border: "1px solid var(--outline-variant)",
+                            borderRadius: "var(--radius-default)",
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: "52px",
+                              height: "52px",
+                              borderRadius: "var(--radius-default)",
+                              overflow: "hidden",
+                              background: "var(--surface-container-low)",
+                            }}
+                          >
+                            {shopType.image && (
+                              <img
+                                src={shopType.image}
+                                alt={shopType.name}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                }}
+                              />
+                            )}
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: 700 }}>
+                              {shopType.name}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "0.75rem",
+                                color: "var(--on-surface-variant)",
+                                wordBreak: "break-all",
+                              }}
+                            >
+                              {shopType.id}
+                            </div>
+                          </div>
+                          <div style={{ display: "flex", gap: "0.5rem" }}>
+                            <button
+                              type="button"
+                              className="btn"
+                              onClick={() =>
+                                openEditModal("shopType", shopType)
+                              }
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              className="btn"
+                              onClick={() =>
+                                handleDeleteItem("shopType", shopType)
+                              }
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
 
@@ -686,7 +1014,9 @@ function App() {
                   <div
                     style={{
                       display: "flex",
-                      justifyContent: "center",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "1rem",
                       width: "100%",
                     }}
                   >
@@ -694,6 +1024,108 @@ function App() {
                       shopTypes={shopTypes}
                       onSubmit={handleCreateCategory}
                     />
+                    <div
+                      className="glass-panel"
+                      style={{
+                        width: "100%",
+                        maxWidth: "720px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.75rem",
+                      }}
+                    >
+                      <h3
+                        className="headline-sm"
+                        style={{ fontSize: "1.1rem" }}
+                      >
+                        Product Categories
+                      </h3>
+                      <select
+                        value={categoryShopTypeId}
+                        onChange={(e) => {
+                          const shopTypeId = e.target.value;
+                          setCategoryShopTypeId(shopTypeId);
+                          handleGetCategoriesByShopType(shopTypeId);
+                        }}
+                      >
+                        <option value="">-- Choose Shop Type --</option>
+                        {shopTypes.map((shopType) => (
+                          <option key={shopType.id} value={shopType.id}>
+                            {shopType.name}
+                          </option>
+                        ))}
+                      </select>
+
+                      {categories.map((category) => (
+                        <div
+                          key={category.id}
+                          style={{
+                            display: "grid",
+                            gridTemplateColumns: "52px 1fr",
+                            gap: "0.75rem",
+                            alignItems: "center",
+                            padding: "0.75rem",
+                            border: "1px solid var(--outline-variant)",
+                            borderRadius: "var(--radius-default)",
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: "52px",
+                              height: "52px",
+                              borderRadius: "var(--radius-default)",
+                              overflow: "hidden",
+                              background: "var(--surface-container-low)",
+                            }}
+                          >
+                            {category.image && (
+                              <img
+                                src={category.image}
+                                alt={category.name}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                }}
+                              />
+                            )}
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: 700 }}>
+                              {category.name}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "0.75rem",
+                                color: "var(--on-surface-variant)",
+                              }}
+                            >
+                              {category.type}
+                            </div>
+                          </div>
+                          <div style={{ display: "flex", gap: "0.5rem" }}>
+                            <button
+                              type="button"
+                              className="btn"
+                              onClick={() =>
+                                openEditModal("category", category)
+                              }
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              className="btn"
+                              onClick={() =>
+                                handleDeleteItem("category", category)
+                              }
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
 
@@ -702,15 +1134,98 @@ function App() {
                   <div
                     style={{
                       display: "flex",
-                      justifyContent: "center",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "1rem",
                       width: "100%",
                     }}
                   >
                     <ProductForm
                       shopTypes={shopTypes}
                       categories={categories}
+                      onShopTypeChange={handleGetCategoriesByShopType}
+                      onCategoryChange={handleGetProductsByCategory}
                       onSubmit={handleCreateProduct}
                     />
+                    <div
+                      className="glass-panel"
+                      style={{
+                        width: "100%",
+                        maxWidth: "720px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.75rem",
+                      }}
+                    >
+                      <h3
+                        className="headline-sm"
+                        style={{ fontSize: "1.1rem" }}
+                      >
+                        Products
+                      </h3>
+                      {products.length === 0 ? (
+                        <div
+                          style={{
+                            color: "var(--on-surface-variant)",
+                            fontSize: "0.85rem",
+                          }}
+                        >
+                          Select a product category above to load products.
+                        </div>
+                      ) : (
+                        products.map((product) => (
+                          <div
+                            key={product.id}
+                            style={{
+                              display: "grid",
+                              gridTemplateColumns: "1fr auto auto",
+                              gap: "0.75rem",
+                              alignItems: "center",
+                              padding: "0.75rem",
+                              border: "1px solid var(--outline-variant)",
+                              borderRadius: "var(--radius-default)",
+                            }}
+                          >
+                            <div>
+                              <div style={{ fontWeight: 700 }}>
+                                {product.name}
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "0.75rem",
+                                  color: "var(--on-surface-variant)",
+                                }}
+                              >
+                                {product.brand}
+                              </div>
+                            </div>
+                            <div style={{ fontWeight: 700 }}>
+                              {product.price}
+                            </div>
+                            <div style={{ display: "flex", gap: "0.5rem" }}>
+                              <button
+                                type="button"
+                                className="btn"
+                                onClick={() =>
+                                  openEditModal("product", product)
+                                }
+                              >
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                className="btn"
+                                onClick={() =>
+                                  handleDeleteItem("product", product)
+                                }
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
@@ -739,6 +1254,240 @@ function App() {
                   transit logs, timelines, and routes maps. Add custom
                   components to display tracking timelines here.
                 </p>
+              </div>
+            )}
+
+            {editingItem && (
+              <div
+                style={{
+                  position: "fixed",
+                  inset: 0,
+                  background: "rgba(0,0,0,0.65)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "1rem",
+                  zIndex: 50,
+                }}
+                onClick={closeEditModal}
+              >
+                <form
+                  onSubmit={handleUpdateItem}
+                  className="glass-panel"
+                  style={{
+                    width: "100%",
+                    maxWidth: "620px",
+                    maxHeight: "85vh",
+                    overflow: "auto",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "1rem",
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: "1rem",
+                      alignItems: "center",
+                    }}
+                  >
+                    <h3 className="headline-sm" style={{ fontSize: "1.2rem" }}>
+                      Edit{" "}
+                      {editingItem.kind === "shopType"
+                        ? "Shop Type"
+                        : editingItem.kind === "category"
+                          ? "Product Category"
+                          : "Product"}
+                    </h3>
+                    <button
+                      type="button"
+                      className="btn"
+                      onClick={closeEditModal}
+                      style={{ border: "1px solid var(--outline-variant)" }}
+                    >
+                      Close
+                    </button>
+                  </div>
+
+                  {editForm.image && (
+                    <img
+                      src={editForm.image}
+                      alt={editForm.imageAlt || editForm.name}
+                      style={{
+                        width: "100%",
+                        maxHeight: "220px",
+                        objectFit: "cover",
+                        borderRadius: "var(--radius-default)",
+                        border: "1px solid var(--outline-variant)",
+                      }}
+                    />
+                  )}
+
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr",
+                      gap: "0.75rem",
+                    }}
+                  >
+                    <label>
+                      <span className="label-md">Name</span>
+                      <input
+                        type="text"
+                        value={editForm.name || ""}
+                        onChange={(e) =>
+                          handleEditFormChange("name", e.target.value)
+                        }
+                        required
+                      />
+                    </label>
+
+                    {editingItem.kind === "product" && (
+                      <label>
+                        <span className="label-md">Brand</span>
+                        <input
+                          type="text"
+                          value={editForm.brand || ""}
+                          onChange={(e) =>
+                            handleEditFormChange("brand", e.target.value)
+                          }
+                          required
+                        />
+                      </label>
+                    )}
+
+                    {editingItem.kind === "product" && (
+                      <label>
+                        <span className="label-md">Type</span>
+                        <select
+                          value={editForm.type || "common"}
+                          onChange={(e) =>
+                            handleEditFormChange("type", e.target.value)
+                          }
+                        >
+                          <option value="common">Common</option>
+                          <option value="individual">Individual</option>
+                        </select>
+                      </label>
+                    )}
+
+                    {editingItem.kind === "product" && (
+                      <>
+                        <label>
+                          <span className="label-md">Price</span>
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={editForm.price || ""}
+                            onChange={(e) =>
+                              handleEditFormChange("price", e.target.value)
+                            }
+                            required
+                          />
+                        </label>
+                        <label>
+                          <span className="label-md">Weight</span>
+                          <input
+                            type="number"
+                            value={editForm.weight || ""}
+                            onChange={(e) =>
+                              handleEditFormChange("weight", e.target.value)
+                            }
+                          />
+                        </label>
+                        <label>
+                          <span className="label-md">Weight Unit</span>
+                          <select
+                            value={editForm.weight_prefix || "g"}
+                            onChange={(e) =>
+                              handleEditFormChange(
+                                "weight_prefix",
+                                e.target.value,
+                              )
+                            }
+                          >
+                            <option value="mg">mg</option>
+                            <option value="g">g</option>
+                            <option value="kg">kg</option>
+                          </select>
+                        </label>
+                        <label>
+                          <span className="label-md">Quantity</span>
+                          <input
+                            type="number"
+                            value={editForm.available_quantity || ""}
+                            onChange={(e) =>
+                              handleEditFormChange(
+                                "available_quantity",
+                                e.target.value,
+                              )
+                            }
+                            required
+                          />
+                        </label>
+                        <label>
+                          <span className="label-md">Quantity Unit</span>
+                          <select
+                            value={editForm.quantity_prefix || "pcs"}
+                            onChange={(e) =>
+                              handleEditFormChange(
+                                "quantity_prefix",
+                                e.target.value,
+                              )
+                            }
+                          >
+                            <option value="pcs">pcs</option>
+                            <option value="kg">kg</option>
+                            <option value="g">g</option>
+                            <option value="ml">ml</option>
+                            <option value="ltr">ltr</option>
+                          </select>
+                        </label>
+                        <label>
+                          <span className="label-md">Availability</span>
+                          <select
+                            value={editForm.availability ? "true" : "false"}
+                            onChange={(e) =>
+                              handleEditFormChange(
+                                "availability",
+                                e.target.value === "true",
+                              )
+                            }
+                          >
+                            <option value="true">Available</option>
+                            <option value="false">Unavailable</option>
+                          </select>
+                        </label>
+                      </>
+                    )}
+                  </div>
+
+                  {editingItem.kind === "product" && (
+                    <label>
+                      <span className="label-md">Description</span>
+                      <textarea
+                        value={editForm.description || ""}
+                        onChange={(e) =>
+                          handleEditFormChange("description", e.target.value)
+                        }
+                        rows={3}
+                      />
+                    </label>
+                  )}
+
+                  <ImageUploader
+                    label="Update Image"
+                    onUploadSuccess={(path) =>
+                      handleEditFormChange("image", path)
+                    }
+                  />
+
+                  <button type="submit" className="btn btn-primary">
+                    Submit
+                  </button>
+                </form>
               </div>
             )}
           </div>

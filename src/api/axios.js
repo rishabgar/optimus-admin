@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://optimuskart-api-524416763055.asia-south2.run.app/",
+  // baseURL: "https://optimuskart-api-524416763055.asia-south2.run.app/",
+  baseURL: "http://localhost:3157/",
 });
 
 api.interceptors.request.use((config) => {
