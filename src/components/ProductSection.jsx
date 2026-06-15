@@ -206,11 +206,18 @@ export default function ProductSection({
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!name.trim()) {
+    const trimmedName = name.trim();
+    const trimmedBrandName = brandName.trim();
+    const trimmedImageAlt = imageAlt.trim();
+    const trimmedDescription = description.trim();
+    const customSellerIdValue = customSellerId.trim();
+    const trimmedCustomSellerName = customSellerName.trim();
+
+    if (!trimmedName) {
       setError("Product Name is required.");
       return;
     }
-    if (!brandName.trim()) {
+    if (!trimmedBrandName) {
       setError("Brand Name is required.");
       return;
     }
@@ -222,12 +229,11 @@ export default function ProductSection({
       setError("Product image is required.");
       return;
     }
-    if (!imageAlt.trim()) {
+    if (!trimmedImageAlt) {
       setError("Image alt text is required.");
       return;
     }
 
-    const customSellerIdValue = customSellerId.trim();
     const shouldCreateAdminProduct =
       isAdmin && !activeSellerId && !customSellerIdValue;
     let targetSellerId = activeSellerId || currentUserId || "101";
@@ -235,7 +241,7 @@ export default function ProductSection({
 
     if (isAdmin && !activeSellerId && customSellerIdValue) {
       targetSellerId = customSellerIdValue;
-      targetSellerName = customSellerName.trim() || `Seller #${customSellerIdValue}`;
+      targetSellerName = trimmedCustomSellerName || `Seller #${customSellerIdValue}`;
     } else if (shouldCreateAdminProduct) {
       targetSellerName = "Admin";
     }
@@ -269,33 +275,12 @@ export default function ProductSection({
         throw new Error("Price is too high.");
       }
 
-      const payload = {
-        product_name: name.trim(),
-        product_price: productPrice,
-        availability,
-        shop_type_id: shopTypeId,
-        is_prescription_required: isPrescriptionRequired,
-        is_reward_product: isRewardProduct,
-        brand_name: brandName.trim(),
-        product_category_id: categoryId,
-        product_type: productType,
-      };
-
-      if (!shouldCreateAdminProduct) {
-        payload.user_id = targetSellerId;
-        payload.shop_id = shopId;
-      }
-
-      if (description.trim()) {
-        payload.product_description = description.trim();
-      }
-
+      let normalizedProductWeight;
       if (productWeight !== "") {
-        payload.product_weight = getPositiveNumber(
+        normalizedProductWeight = getPositiveNumber(
           productWeight,
           "Product weight",
         );
-        payload.weight_prefix = weightPrefix;
       } else if (weightPrefix) {
         throw new Error(
           "Product weight is required when weight unit is provided.",
@@ -308,16 +293,15 @@ export default function ProductSection({
         );
       }
 
+      let normalizedProductQuantity;
       if (productQuantity !== "") {
-        const numericQuantity = getPositiveNumber(
+        normalizedProductQuantity = getPositiveNumber(
           productQuantity,
           "Product quantity",
         );
-        if (numericQuantity > 100000) {
+        if (normalizedProductQuantity > 100000) {
           throw new Error("Product quantity is too high.");
         }
-        payload.product_quantity = numericQuantity;
-        payload.quantity_prefix = quantityPrefix;
       } else if (quantityPrefix) {
         throw new Error(
           "Product quantity is required when quantity unit is provided.",
@@ -330,18 +314,136 @@ export default function ProductSection({
         );
       }
 
+      let normalizedRewardTokensRequired;
       if (isRewardProduct) {
         if (rewardTokensRequired === "") {
           throw new Error("Reward tokens are required for reward products.");
         }
-        payload.reward_tokens_required = getPositiveInteger(
+        normalizedRewardTokensRequired = getPositiveInteger(
           rewardTokensRequired,
           "Reward tokens",
         );
       }
 
-      if (editingProduct) {
-        payload.product_id = editingProduct.id;
+      const payload = editingProduct
+        ? {
+            product_id: editingProduct.id,
+          }
+        : {
+            product_name: trimmedName,
+            product_price: productPrice,
+            availability,
+            shop_type_id: shopTypeId,
+            is_prescription_required: isPrescriptionRequired,
+            is_reward_product: isRewardProduct,
+            brand_name: trimmedBrandName,
+            product_category_id: categoryId,
+            product_type: productType,
+          };
+
+      if (!editingProduct) {
+        if (!shouldCreateAdminProduct) {
+          payload.user_id = targetSellerId;
+          payload.shop_id = shopId;
+        }
+
+        if (trimmedDescription) {
+          payload.product_description = trimmedDescription;
+        }
+
+        if (normalizedProductWeight !== undefined) {
+          payload.product_weight = normalizedProductWeight;
+          payload.weight_prefix = weightPrefix;
+        }
+
+        if (normalizedProductQuantity !== undefined) {
+          payload.product_quantity = normalizedProductQuantity;
+          payload.quantity_prefix = quantityPrefix;
+        }
+
+        if (normalizedRewardTokensRequired !== undefined) {
+          payload.reward_tokens_required = normalizedRewardTokensRequired;
+        }
+      } else {
+        if (trimmedName !== (editingProduct.name || "").trim()) {
+          payload.product_name = trimmedName;
+        }
+        if (productPrice !== Number(editingProduct.price)) {
+          payload.product_price = productPrice;
+        }
+        if (availability !== (editingProduct.availability ?? true)) {
+          payload.availability = availability;
+        }
+        if (String(shopTypeId) !== String(editingProduct.shopTypeId || "")) {
+          payload.shop_type_id = shopTypeId;
+        }
+        if (
+          isPrescriptionRequired !==
+          (editingProduct.isPrescriptionRequired ?? false)
+        ) {
+          payload.is_prescription_required = isPrescriptionRequired;
+        }
+        if (isRewardProduct !== (editingProduct.isRewardProduct ?? false)) {
+          payload.is_reward_product = isRewardProduct;
+        }
+        if (trimmedBrandName !== (editingProduct.brandName || "").trim()) {
+          payload.brand_name = trimmedBrandName;
+        }
+        if (String(categoryId) !== String(editingProduct.categoryId || "")) {
+          payload.product_category_id = categoryId;
+        }
+        if (
+          trimmedDescription !== (editingProduct.description || "").trim()
+        ) {
+          payload.product_description = trimmedDescription;
+        }
+        if (
+          (normalizedProductQuantity !== undefined &&
+            normalizedProductQuantity !==
+              Number(editingProduct.productQuantity ?? editingProduct.stock)) ||
+          quantityPrefix !== (editingProduct.quantityPrefix || "")
+        ) {
+          if (normalizedProductQuantity !== undefined) {
+            payload.product_quantity = normalizedProductQuantity;
+          }
+          payload.quantity_prefix = quantityPrefix;
+        }
+        if (
+          (normalizedProductWeight !== undefined &&
+            normalizedProductWeight !==
+              Number(editingProduct.productWeight ?? "")) ||
+          weightPrefix !== (editingProduct.weightPrefix || "")
+        ) {
+          if (normalizedProductWeight !== undefined) {
+            payload.product_weight = normalizedProductWeight;
+          }
+          payload.weight_prefix = weightPrefix;
+        }
+        if (
+          isRewardProduct &&
+          normalizedRewardTokensRequired !==
+            Number(editingProduct.rewardTokensRequired ?? "")
+        ) {
+          payload.reward_tokens_required = normalizedRewardTokensRequired;
+        }
+        if (
+          !shouldCreateAdminProduct &&
+          String(targetSellerId) !== String(editingProduct.sellerId || "")
+        ) {
+          payload.user_id = targetSellerId;
+        }
+        if (
+          !shouldCreateAdminProduct &&
+          (payload.product_category_id ||
+            payload.shop_type_id ||
+            String(shopId) !== String(editingProduct.shopId || ""))
+        ) {
+          payload.shop_id = shopId;
+        }
+        if (Object.keys(payload).length === 1 && !imageFile) {
+          closeModal();
+          return;
+        }
       }
 
       if (imageFile) {
@@ -358,7 +460,7 @@ export default function ProductSection({
         payload.product_images = [
           {
             url: path,
-            alt: imageAlt.trim(),
+            alt: trimmedImageAlt,
           },
         ];
       }
@@ -379,20 +481,32 @@ export default function ProductSection({
         payload.product_images?.[0] ??
         editingProduct?.productImages?.[0];
       const createdQuantity =
-        createdProduct.product_quantity ?? payload.product_quantity;
+        createdProduct.product_quantity ??
+        payload.product_quantity ??
+        editingProduct?.productQuantity ??
+        editingProduct?.stock;
 
       const newProduct = {
         id:
           createdProduct.product_id ||
           editingProduct?.id ||
           Date.now().toString(),
-        name: createdProduct.product_name || payload.product_name,
+        name:
+          createdProduct.product_name ||
+          payload.product_name ||
+          editingProduct?.name,
         categoryId: createdProduct.product_category_id || categoryId,
         categoryName,
         shopTypeId: createdProduct.shop_type_id || shopTypeId,
         shopId: createdProduct.shop_id || shopId,
-        brandName: createdProduct.brand_name || payload.brand_name,
-        price: createdProduct.product_price ?? payload.product_price,
+        brandName:
+          createdProduct.brand_name ||
+          payload.brand_name ||
+          editingProduct?.brandName,
+        price:
+          createdProduct.product_price ??
+          payload.product_price ??
+          editingProduct?.price,
         stock: createdQuantity,
         productQuantity: createdQuantity,
         availableQuantity:
@@ -402,6 +516,7 @@ export default function ProductSection({
         description:
           createdProduct.product_description ||
           payload.product_description ||
+          editingProduct?.description ||
           "",
         image: mainImage?.url || imagePreview,
         productImages:
@@ -414,10 +529,12 @@ export default function ProductSection({
         availability,
         isPrescriptionRequired,
         isRewardProduct,
-        rewardTokensRequired: payload.reward_tokens_required,
-        quantityPrefix: payload.quantity_prefix,
-        productWeight: payload.product_weight,
-        weightPrefix: payload.weight_prefix,
+        rewardTokensRequired:
+          payload.reward_tokens_required ?? editingProduct?.rewardTokensRequired,
+        quantityPrefix:
+          payload.quantity_prefix ?? editingProduct?.quantityPrefix,
+        productWeight: payload.product_weight ?? editingProduct?.productWeight,
+        weightPrefix: payload.weight_prefix ?? editingProduct?.weightPrefix,
         createdAt: editingProduct?.createdAt || new Date().toLocaleDateString(),
       };
 

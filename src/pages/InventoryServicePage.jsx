@@ -255,33 +255,6 @@ export default function InventoryServicePage() {
     urlSellerId,
   ]);
 
-  const inventoryHierarchy = useMemo(
-    () =>
-      visibleShopTypes.map((shopType) => {
-        const shopTypeCategories = visibleCategories.filter(
-          (category) => String(category.shopTypeId) === String(shopType.id),
-        );
-
-        return {
-          ...shopType,
-          categories: shopTypeCategories.map((category) => {
-            const categoryProducts = visibleProducts.filter(
-              (product) => String(product.categoryId) === String(category.id),
-            );
-
-            return {
-              ...category,
-              productCount: categoryProducts.length,
-            };
-          }),
-          productCount: visibleProducts.filter(
-            (product) => String(product.shopTypeId) === String(shopType.id),
-          ).length,
-        };
-      }),
-    [visibleCategories, visibleProducts, visibleShopTypes],
-  );
-
   const productPagination = !urlSellerId
     ? {
         page: commonProductsPage,
@@ -394,75 +367,6 @@ export default function InventoryServicePage() {
       </div>
 
       <div style={{ display: "grid", gap: "32px" }}>
-        {activeRole?.toLowerCase() === "admin" && (
-          <section className="inventory-section inventory-hierarchy-section">
-            <div className="section-header">
-              <h2>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect x="3" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="14" width="7" height="7"></rect>
-                  <rect x="3" y="14" width="7" height="7"></rect>
-                </svg>
-                Inventory Hierarchy
-              </h2>
-            </div>
-
-            {isShopTypesLoading ||
-            (urlSellerId ? isSellerCategoriesLoading : isCommonCategoriesLoading) ||
-            (urlSellerId ? isSellerProductsLoading : isCommonProductsLoading) ? (
-              <div className="empty-state">
-                <p>Loading inventory hierarchy...</p>
-              </div>
-            ) : inventoryHierarchy.length === 0 ? (
-              <div className="empty-state">
-                <p>No shop types found.</p>
-              </div>
-            ) : (
-              <div className="inventory-hierarchy-list">
-                {inventoryHierarchy.map((shopType) => (
-                  <div key={shopType.id} className="hierarchy-shop">
-                    <div className="hierarchy-shop-header">
-                      <div>
-                        <h3>{shopType.name}</h3>
-                      </div>
-                      <div className="hierarchy-counts">
-                        <span>{shopType.categories.length} Categories</span>
-                        <span>{shopType.productCount} Products</span>
-                      </div>
-                    </div>
-
-                    {shopType.categories.length === 0 ? (
-                      <p className="hierarchy-empty">No categories added.</p>
-                    ) : (
-                      <div className="hierarchy-category-list">
-                        {shopType.categories.map((category) => (
-                          <div key={category.id} className="hierarchy-category">
-                            <div className="hierarchy-category-title">
-                              <strong>{category.name}</strong>
-                              <span>{category.productCount} Products</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-        )}
-
         <ShopTypeSection
           shopTypes={visibleShopTypes}
           onAddShopType={handleAddShopType}

@@ -88,6 +88,8 @@ export default function CategorySection({
 
   async function handleSubmit(e) {
     e.preventDefault();
+    const trimmedName = name.trim();
+
     if (!editingCategory && !name.trim()) {
       setError("Category Name is required.");
       return;
@@ -113,7 +115,7 @@ export default function CategorySection({
       setError("");
       setIsSubmitting(true);
 
-      let imagePath = editingCategory?.image || "";
+      let imagePath = "";
 
       if (imageFile) {
         const compressedImage = await compressImage(imageFile);
@@ -128,13 +130,33 @@ export default function CategorySection({
         imagePath = path;
       }
 
-      const payload = {
-        product_category_name: name.trim() || editingCategory?.name,
-        product_category_image: imagePath,
-        shop_type_id: selectedShopTypeId || editingCategory?.shopTypeId,
-      };
+      const payload = editingCategory
+        ? {
+            product_category_id: editingCategory.id,
+          }
+        : {
+            product_category_name: trimmedName,
+            product_category_image: imagePath,
+            shop_type_id: selectedShopTypeId,
+          };
+
       if (editingCategory) {
-        payload.product_category_id = editingCategory.id;
+        if (trimmedName && trimmedName !== (editingCategory.name || "").trim()) {
+          payload.product_category_name = trimmedName;
+        }
+        if (
+          selectedShopTypeId &&
+          String(selectedShopTypeId) !== String(editingCategory.shopTypeId)
+        ) {
+          payload.shop_type_id = selectedShopTypeId;
+        }
+        if (imageFile) {
+          payload.product_category_image = imagePath;
+        }
+        if (Object.keys(payload).length === 1) {
+          closeModal();
+          return;
+        }
       }
 
       const response = editingCategory
@@ -155,14 +177,22 @@ export default function CategorySection({
           Date.now().toString(),
         name:
           createdCategory.product_category_name ||
-          payload.product_category_name,
-        image: createdCategory.product_category_image || imagePath,
+          payload.product_category_name ||
+          editingCategory?.name,
+        image:
+          createdCategory.product_category_image ||
+          payload.product_category_image ||
+          editingCategory?.image ||
+          "",
         sellerId:
           createdCategory.seller_id ||
           editingCategory?.sellerId ||
           activeSellerId ||
           "",
-        shopTypeId: createdCategory.shop_type_id || payload.shop_type_id,
+        shopTypeId:
+          createdCategory.shop_type_id ||
+          payload.shop_type_id ||
+          editingCategory?.shopTypeId,
         shopTypeName:
           createdCategory.product_category_type ||
           selectedShopType?.name ||

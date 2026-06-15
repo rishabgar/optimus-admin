@@ -31,7 +31,8 @@ api.interceptors.response.use(
 
       if (token) sessionStorage.setItem("token", token);
       if (first_name) sessionStorage.setItem("first_name", first_name);
-      if (verifiedUserId) sessionStorage.setItem("user_id", String(verifiedUserId));
+      if (verifiedUserId)
+        sessionStorage.setItem("user_id", String(verifiedUserId));
       if (user_type) sessionStorage.setItem("user_type", user_type);
     }
 

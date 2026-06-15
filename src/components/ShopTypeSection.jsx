@@ -16,7 +16,7 @@ export default function ShopTypeSection({
   activeSellerId,
   createShopTypeEndpoint = "/shop/type/create",
   getUpdateShopTypeEndpoint = (id) => `/shop/type/${id}`,
-  getDeleteShopTypeEndpoint = (id) => `/shop/type/delete/${id}`,
+  getDeleteShopTypeEndpoint = (id) => `/shop/type/${id}`,
   isLoading = false,
   isError = false,
   isReadOnly = false,
@@ -86,6 +86,8 @@ export default function ShopTypeSection({
 
   async function handleSubmit(e) {
     e.preventDefault();
+    const trimmedName = name.trim();
+
     if (!name.trim()) {
       setError("Shop type name is required.");
       return;
@@ -107,7 +109,7 @@ export default function ShopTypeSection({
       setError("");
       setIsSubmitting(true);
 
-      let imagePath = editingShopType?.image || "";
+      let imagePath = "";
 
       if (imageFile) {
         const compressedImage = await compressImage(imageFile);
@@ -122,10 +124,26 @@ export default function ShopTypeSection({
         imagePath = path;
       }
 
-      const payload = {
-        shop_type_name: name.trim(),
-        shop_type_image: imagePath,
-      };
+      const payload = editingShopType
+        ? {}
+        : {
+            shop_type_name: trimmedName,
+            shop_type_image: imagePath,
+          };
+
+      if (editingShopType) {
+        if (trimmedName !== (editingShopType.name || "").trim()) {
+          payload.shop_type_name = trimmedName;
+        }
+        if (imageFile) {
+          payload.shop_type_image = imagePath;
+        }
+        if (Object.keys(payload).length === 0) {
+          closeModal();
+          return;
+        }
+      }
+
       const response = editingShopType
         ? await updateShopTypeApi(
             getUpdateShopTypeEndpoint(editingShopType.id),
@@ -139,8 +157,15 @@ export default function ShopTypeSection({
           createdShopType.shop_type_id ||
           editingShopType?.id ||
           Date.now().toString(),
-        name: createdShopType.shop_type_name || payload.shop_type_name,
-        image: createdShopType.shop_type_image || payload.shop_type_image,
+        name:
+          createdShopType.shop_type_name ||
+          payload.shop_type_name ||
+          editingShopType?.name,
+        image:
+          createdShopType.shop_type_image ||
+          payload.shop_type_image ||
+          editingShopType?.image ||
+          "",
         status: editingShopType?.status || "Active",
         sellerId: editingShopType?.sellerId || activeSellerId || uploadOwnerId,
         createdAt: editingShopType?.createdAt || new Date().toLocaleDateString(),
