@@ -1,0 +1,129 @@
+.tableWrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 8px;
+  background: #2d3449;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  text-align: left;
+  vertical-align: top;
+}
+
+.table th {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.table td {
+  color: var(--text-h);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.mutedCell {
+  min-width: 280px;
+  color: var(--text-muted);
+}
+
+.table th:last-child,
+.table td:last-child {
+  width: 96px;
+  text-align: right;
+}
+
+.actions {
+  position: relative;
+  display: inline-flex;
+  justify-content: flex-end;
+}
+
+.actionButton {
+  width: 34px;
+  height: 34px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 6px;
+  color: var(--text-h);
+  background: rgba(15, 23, 42, 0.25);
+  font: 800 18px/1 var(--sans);
+  cursor: pointer;
+}
+
+.actionButton:hover {
+  border-color: rgba(56, 189, 248, 0.45);
+  background: rgba(56, 189, 248, 0.12);
+}
+
+.actionButton:focus-visible,
+.actionMenu button:focus-visible {
+  outline: 2px solid #7bd0ff;
+  outline-offset: 2px;
+}
+
+.actionMenu {
+  position: fixed;
+  z-index: 999;
+  min-width: 148px;
+  padding: 6px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 8px;
+  background: #172033;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.32);
+}
+
+.actionMenuBackdrop {
+  position: fixed;
+  z-index: 998;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: default;
+}
+
+.actionMenu button {
+  width: 100%;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  color: var(--text-h);
+  background: transparent;
+  font: 800 13px/18px var(--sans);
+  text-align: left;
+  cursor: pointer;
+}
+
+.actionMenu button:hover {
+  color: #052a3a;
+  background: #38bdf8;
+}
+
+.statusCell {
+  height: 120px;
+  color: var(--text-muted);
+  text-align: center;
+  vertical-align: middle;
+}

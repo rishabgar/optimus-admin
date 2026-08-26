@@ -1,29 +1,34 @@
 {
-  "name": "optimuskart-admin-dashboard",
-  "version": "1.0.0",
+  "name": "optimus-admin",
+  "private": true,
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint src --ext js,jsx"
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.24.0",
-    "axios": "^1.7.2",
-    "zustand": "^4.5.2",
-    "react-hook-form": "^7.51.2",
-    "react-hot-toast": "^2.4.1",
-    "lucide-react": "^0.408.0",
-    "recharts": "^2.12.7"
+    "@tanstack/react-query": "^5.101.4",
+    "axios": "^1.19.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-hook-form": "^7.85.0",
+    "react-router": "^7.18.2"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.0",
-    "vite": "^5.2.11",
-    "tailwindcss": "^3.4.3",
-    "postcss": "^8.4.38",
-    "autoprefixer": "^10.4.18"
+    "@babel/core": "^7.29.7",
+    "@eslint/js": "^10.0.1",
+    "@rolldown/plugin-babel": "^0.2.3",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.4",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "eslint": "^10.8.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.3",
+    "globals": "^17.7.0",
+    "vite": "^8.2.0"
   }
 }

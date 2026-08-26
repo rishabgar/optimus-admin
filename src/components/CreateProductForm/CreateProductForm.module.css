@@ -1,0 +1,280 @@
+.form {
+  width: 100%;
+  box-sizing: border-box;
+  display: grid;
+  gap: 20px;
+  padding: 18px;
+}
+
+.formGrid,
+.variantGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.field {
+  min-width: 0;
+  display: grid;
+  gap: 7px;
+}
+
+.field span,
+.uploadField span {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.field span b,
+.uploadField span b {
+  color: #fca5a5;
+  font: inherit;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 6px;
+  color: var(--text-h);
+  background: #172033;
+  font: 700 14px/20px var(--sans);
+}
+
+.field textarea {
+  min-height: 86px;
+  padding-top: 10px;
+  resize: vertical;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus,
+.secondaryButton:focus-visible,
+.clearImageButton:focus-visible,
+.removeButton:focus-visible,
+.submitButton:focus-visible {
+  outline: 2px solid #7bd0ff;
+  outline-offset: 2px;
+}
+
+.field input[aria-invalid="true"],
+.field select[aria-invalid="true"] {
+  border-color: rgba(248, 113, 113, 0.72);
+}
+
+.field small {
+  color: #fca5a5;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+}
+
+.uploadField {
+  min-width: 0;
+  display: grid;
+  gap: 7px;
+}
+
+.uploadField small {
+  color: #fca5a5;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+}
+
+.uploadControl {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.uploadControl input[type="file"] {
+  min-width: 0;
+  color: var(--text-muted);
+  font: 700 13px/18px var(--sans);
+}
+
+.previewWrap {
+  position: relative;
+  flex: 0 0 auto;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 6px;
+  background: #172033;
+}
+
+.previewWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.clearImageButton {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  border-radius: 6px;
+  color: #fecaca;
+  background: rgba(127, 29, 29, 0.78);
+  font: 800 12px/1 var(--sans);
+  cursor: pointer;
+}
+
+.uploadPlaceholder {
+  width: 112px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed rgba(148, 163, 184, 0.32);
+  border-radius: 6px;
+  color: var(--text-muted);
+  background: #172033;
+  font: 800 12px/16px var(--sans);
+}
+
+.fullField {
+  grid-column: 1 / -1;
+}
+
+.section {
+  display: grid;
+  gap: 12px;
+}
+
+.sectionHeader,
+.variantHeader,
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sectionHeader h3,
+.variantHeader h4 {
+  margin: 0;
+  color: var(--text-h);
+  font-weight: 800;
+}
+
+.sectionHeader h3 {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.variantHeader h4 {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.imageRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 118px;
+  align-items: end;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 8px;
+  background: rgba(23, 32, 51, 0.45);
+}
+
+.variantCard {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 8px;
+  background: rgba(23, 32, 51, 0.45);
+}
+
+.secondaryButton,
+.removeButton,
+.submitButton {
+  box-sizing: border-box;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 6px;
+  font: 800 13px/18px var(--sans);
+  cursor: pointer;
+}
+
+.secondaryButton {
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  color: var(--text-h);
+  background: rgba(56, 189, 248, 0.12);
+}
+
+.secondaryButton:hover {
+  background: rgba(56, 189, 248, 0.2);
+}
+
+.removeButton {
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  color: #fecaca;
+  background: rgba(127, 29, 29, 0.18);
+  white-space: nowrap;
+}
+
+.removeButton:hover:not(:disabled) {
+  background: rgba(127, 29, 29, 0.3);
+}
+
+.removeButton:disabled,
+.submitButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.submitButton {
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  color: #052a3a;
+  background: #38bdf8;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #7dd3fc;
+}
+
+@media (max-width: 720px) {
+  .formGrid,
+  .variantGrid,
+  .imageRow {
+    grid-template-columns: 1fr;
+  }
+
+  .uploadControl {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .sectionHeader,
+  .variantHeader,
+  .footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .secondaryButton,
+  .removeButton,
+  .submitButton {
+    width: 100%;
+  }
+}

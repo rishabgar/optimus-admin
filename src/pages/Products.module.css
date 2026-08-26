@@ -1,0 +1,355 @@
+.products {
+  display: grid;
+  gap: 24px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header h1 {
+  margin: 0;
+  color: var(--text-h);
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 800;
+}
+
+.titleBar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.22);
+}
+
+.tabButton {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 6px;
+  color: var(--text-muted);
+  background: transparent;
+  font: 800 13px/18px var(--sans);
+  cursor: pointer;
+}
+
+.tabButton:hover {
+  color: var(--text-h);
+  background: rgba(148, 163, 184, 0.12);
+}
+
+.tabButton:focus-visible {
+  outline: 2px solid #7bd0ff;
+  outline-offset: 2px;
+}
+
+.activeTab,
+.activeTab:hover {
+  color: #052a3a;
+  background: #38bdf8;
+}
+
+.createButton {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  border-radius: 6px;
+  color: #052a3a;
+  background: #38bdf8;
+  font: 800 14px/20px var(--sans);
+  cursor: pointer;
+}
+
+.createButton span {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.createButton:hover {
+  background: #7dd3fc;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.selectField select {
+  width: 260px;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 6px;
+  color: var(--text-h);
+  background: #172033;
+  font: 700 14px/20px var(--sans);
+}
+
+.selectField select:focus {
+  outline: 2px solid #7bd0ff;
+  outline-offset: 2px;
+}
+
+.selectField select:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.descriptionCell {
+  min-width: 280px;
+  color: var(--text-muted);
+}
+
+.productImages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 220px;
+}
+
+.productImages img {
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 6px;
+  object-fit: cover;
+  background: rgba(15, 23, 42, 0.25);
+}
+
+.statusCell {
+  height: 120px;
+  color: var(--text-muted);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--text-muted);
+  font: 800 14px/20px var(--sans);
+}
+
+.paginationButtons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.paginationButtons button {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 6px;
+  color: var(--text-h);
+  background: #242b3d;
+  font: 800 13px/18px var(--sans);
+  cursor: pointer;
+}
+
+.paginationButtons button:hover:not(:disabled) {
+  border-color: rgba(56, 189, 248, 0.45);
+  background: rgba(56, 189, 248, 0.12);
+}
+
+.paginationButtons button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.closeButton:focus-visible,
+.paginationButtons button:focus-visible {
+  outline: 2px solid #7bd0ff;
+  outline-offset: 2px;
+}
+
+.modalOverlay {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(2, 6, 23, 0.68);
+}
+
+.modal {
+  width: min(1120px, 100%);
+  max-height: min(860px, 92vh);
+  overflow: auto;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 8px;
+  background: #2d3449;
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.45);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.modalHeader h2 {
+  margin: 0;
+  color: var(--text-h);
+  font-size: 18px;
+  line-height: 26px;
+  font-weight: 800;
+}
+
+.closeButton {
+  width: 32px;
+  height: 32px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 6px;
+  color: var(--text-h);
+  background: rgba(15, 23, 42, 0.25);
+  font: 800 16px/1 var(--sans);
+  cursor: pointer;
+}
+
+.closeButton:hover {
+  border-color: rgba(56, 189, 248, 0.45);
+  background: rgba(56, 189, 248, 0.12);
+}
+
+.variantTableWrap {
+  width: 100%;
+  max-height: min(560px, 72vh);
+  overflow: auto;
+}
+
+.variantTable {
+  width: 100%;
+  min-width: 1060px;
+  border-collapse: collapse;
+}
+
+.variantTable th,
+.variantTable td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  text-align: left;
+  vertical-align: top;
+}
+
+.variantTable th {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.variantTable td {
+  color: var(--text-h);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.variantTable tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.formError {
+  margin: 0;
+  padding: 0 18px 18px;
+  color: #fca5a5;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 800;
+}
+
+.formSuccess {
+  margin: 0;
+  padding: 0 18px 18px;
+  color: #86efac;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 800;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 520px) {
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .titleBar {
+    width: 100%;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .filters {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .tabs {
+    width: 100%;
+  }
+
+  .tabButton {
+    flex: 1;
+  }
+
+  .createButton,
+  .selectField,
+  .selectField select {
+    width: 100%;
+  }
+
+  .createButton {
+    justify-content: center;
+  }
+
+  .pagination {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .paginationButtons,
+  .paginationButtons button {
+    width: 100%;
+  }
+
+  .paginationButtons button {
+    flex: 1;
+  }
+}
