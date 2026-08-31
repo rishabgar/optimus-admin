@@ -10,6 +10,7 @@ const Users = lazy(() => import("../pages/Users"));
 const Signup = lazy(() => import("../pages/Signup"));
 const Products = lazy(() => import("../pages/Products"));
 const Coupons = lazy(() => import("../pages/Coupons"));
+const ElasticSearch = lazy(() => import("../pages/ElasticSearch"));
 
 function withSuspense(element) {
   return (
@@ -42,6 +43,10 @@ export const router = createBrowserRouter([
           {
             path: "coupons",
             element: withSuspense(<Coupons />),
+          },
+          {
+            path: "elastic-search",
+            element: withSuspense(<ElasticSearch />),
           },
           {
             path: "*",

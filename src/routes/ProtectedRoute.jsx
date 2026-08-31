@@ -55,6 +55,17 @@ const sidebarItems = [
     ),
   },
   {
+    label: "Elastic Search",
+    path: "/elastic-search",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m16 16 5 5" />
+        <path d="M8 11h6" />
+      </svg>
+    ),
+  },
+  {
     label: "Users",
     path: "/users",
     icon: (
