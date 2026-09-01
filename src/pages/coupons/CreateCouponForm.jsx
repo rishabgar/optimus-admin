@@ -1,5 +1,5 @@
 import { useForm, useWatch } from "react-hook-form";
-import Portal from "../utils/portal";
+import Portal from "../../utils/portal";
 import styles from "./Coupons.module.css";
 
 const COUPON_TYPES = ["fixed", "percentage"];

@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import CreateProductForm from "../components/CreateProductForm/CreateProductForm";
-import DataTable from "../components/DataTable/DataTable";
+import CreateProductForm from "../../components/CreateProductForm/CreateProductForm";
+import DataTable from "../../components/DataTable/DataTable";
 import {
   createProduct,
   getAdminProductsByCategory,
   getProductsByShop,
-} from "../services/api/products";
-import { getCategoriesByShopType } from "../services/api/categories";
-import { getShopsByType, getShopTypes } from "../services/api/shops";
-import Portal from "../utils/portal";
+} from "../../services/api/products";
+import { getCategoriesByShopType } from "../../services/api/categories";
+import { getShopsByType, getShopTypes } from "../../services/api/shops";
+import Portal from "../../utils/portal";
 import styles from "./Products.module.css";
 
 const SIX_HOURS = 6 * 60 * 60 * 1000;

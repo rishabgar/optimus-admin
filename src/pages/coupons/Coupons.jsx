@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import DataTable from "../components/DataTable/DataTable";
+import DataTable from "../../components/DataTable/DataTable";
 import {
   createCoupon,
   deleteCoupon,
   getCoupons,
   updateCoupon,
-} from "../services/api/coupons";
+} from "../../services/api/coupons";
 import CreateCouponForm from "./CreateCouponForm";
 import UpdateCouponForm from "./UpdateCouponForm";
 import styles from "./Coupons.module.css";

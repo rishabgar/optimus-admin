@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getUsersByType } from "../services/api/users";
-import Portal from "../utils/portal";
+import { getUsersByType } from "../../services/api/users";
+import Portal from "../../utils/portal";
 import styles from "./Users.module.css";
 
 const USER_TABS = [

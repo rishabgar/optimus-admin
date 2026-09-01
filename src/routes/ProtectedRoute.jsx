@@ -55,6 +55,19 @@ const sidebarItems = [
     ),
   },
   {
+    label: "Reward",
+    path: "/reward",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2v20" />
+        <path d="M5 7h14v5H5z" />
+        <path d="M7 12v8h10v-8" />
+        <path d="M12 7C10.5 4.5 8.5 4 7.4 5.1 6.2 6.3 7.2 8 12 7Z" />
+        <path d="M12 7c1.5-2.5 3.5-3 4.6-1.9C17.8 6.3 16.8 8 12 7Z" />
+      </svg>
+    ),
+  },
+  {
     label: "Elastic Search",
     path: "/elastic-search",
     icon: (

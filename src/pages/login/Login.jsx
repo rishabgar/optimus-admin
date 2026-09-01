@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
-import Card from "../components/Card/Card.jsx";
-import { authenticateUser } from "../services/api/authentication.js";
+import Card from "../../components/Card/Card.jsx";
+import { authenticateUser } from "../../services/api/authentication.js";
 import styles from "./Login.module.css";
 
 function Login() {

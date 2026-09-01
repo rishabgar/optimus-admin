@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getUserStats } from "../services/api/users";
+import { getUserStats } from "../../services/api/users";
 import styles from "./Home.module.css";
 
 const SIX_HOURS = 6 * 60 * 60 * 1000;

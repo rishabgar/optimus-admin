@@ -24,6 +24,7 @@ const DEFAULT_VARIANT = {
   product_quantity: 1,
   available_quantity: 1,
   reserved_quantity: 1,
+  reward_tokens_required: "",
 };
 
 const toNumber = (value, fallback) => {
@@ -34,9 +35,12 @@ const toNumber = (value, fallback) => {
 
 function CreateProductForm({
   defaultShopTypeId = "",
+  hideCatalogFields = false,
+  isRewardProduct = false,
   isSubmitting,
   onSubmit,
   shopTypes = [],
+  submitLabel = "Create Product",
 }) {
   const [imageUploads, setImageUploads] = useState({});
   const firstShopTypeId =
@@ -71,7 +75,7 @@ function CreateProductForm({
   } = useQuery({
     queryKey: ["productCategories", selectedShopTypeId],
     queryFn: () => getCategoriesByShopType(selectedShopTypeId),
-    enabled: Boolean(selectedShopTypeId),
+    enabled: !hideCatalogFields && Boolean(selectedShopTypeId),
     staleTime: SIX_HOURS,
     gcTime: SIX_HOURS,
   });
@@ -95,6 +99,7 @@ function CreateProductForm({
   });
 
   useEffect(() => {
+    if (hideCatalogFields) return;
     if (productCategories.length === 0) return;
 
     setValue(
@@ -105,38 +110,50 @@ function CreateProductForm({
         shouldValidate: true,
       },
     );
-  }, [productCategories, setValue]);
+  }, [hideCatalogFields, productCategories, setValue]);
 
   const handleCreateProduct = (formData) => {
-    const payload = {
-      product_name: formData.product_name.trim(),
+    const productName = formData.product_name.trim();
+    const basePayload = {
+      product_name: productName,
       product_images: formData.product_images.map((image) => ({
         url: image.url.trim(),
-        alt: image.alt?.trim() || formData.product_name.trim(),
+        alt: image.alt?.trim() || productName,
       })),
-      availability: true,
       variants: formData.variants.map((variant, index) => ({
         label: variant.label.trim(),
         weight_value: Number(variant.weight_value),
         weight_unit: variant.weight_unit,
         weight_in_grams: toNumber(variant.weight_in_grams, 0),
-        price: Number(variant.price),
         mrp: Number(variant.mrp),
         product_quantity: toNumber(variant.product_quantity, 1),
-        available_quantity: toNumber(variant.available_quantity, 1),
-        reserved_quantity: toNumber(variant.reserved_quantity, 1),
         is_default: index === 0,
         is_active: true,
-        sort_order: index + 1,
+        ...(isRewardProduct
+          ? {
+              reward_tokens_required: Number(variant.reward_tokens_required),
+            }
+          : {
+              price: Number(variant.price),
+              available_quantity: toNumber(variant.available_quantity, 1),
+              reserved_quantity: toNumber(variant.reserved_quantity, 1),
+              sort_order: index + 1,
+            }),
       })),
-      is_prescription_required: false,
-      is_reward_product: false,
-      shop_type_id: formData.shop_type_id.trim(),
       product_description: formData.product_description.trim(),
       brand_name: formData.brand_name.trim(),
-      product_category_id: formData.product_category_id.trim(),
-      product_type: "common",
     };
+    const payload = isRewardProduct
+      ? basePayload
+      : {
+          ...basePayload,
+          availability: true,
+          is_prescription_required: false,
+          is_reward_product: false,
+          shop_type_id: formData.shop_type_id.trim(),
+          product_category_id: formData.product_category_id.trim(),
+          product_type: "common",
+        };
 
     onSubmit(payload);
   };
@@ -241,30 +258,32 @@ function CreateProductForm({
           ) : null}
         </label>
 
-        <label className={styles.field}>
-          <span>
-            Shop Type <b aria-hidden="true">*</b>
-          </span>
-          <select
-            aria-invalid={errors.shop_type_id ? "true" : "false"}
-            {...register("shop_type_id", {
-              required: "Shop type id is required",
-            })}
-          >
-            {shopTypes.map((shopType) => {
-              const shopTypeId = shopType.shop_type_id || shopType._id;
+        {hideCatalogFields ? null : (
+          <label className={styles.field}>
+            <span>
+              Shop Type <b aria-hidden="true">*</b>
+            </span>
+            <select
+              aria-invalid={errors.shop_type_id ? "true" : "false"}
+              {...register("shop_type_id", {
+                required: "Shop type id is required",
+              })}
+            >
+              {shopTypes.map((shopType) => {
+                const shopTypeId = shopType.shop_type_id || shopType._id;
 
-              return (
-                <option key={shopTypeId} value={shopTypeId}>
-                  {shopType.shop_type_name}
-                </option>
-              );
-            })}
-          </select>
-          {errors.shop_type_id ? (
-            <small>{errors.shop_type_id.message}</small>
-          ) : null}
-        </label>
+                return (
+                  <option key={shopTypeId} value={shopTypeId}>
+                    {shopType.shop_type_name}
+                  </option>
+                );
+              })}
+            </select>
+            {errors.shop_type_id ? (
+              <small>{errors.shop_type_id.message}</small>
+            ) : null}
+          </label>
+        )}
 
         <label className={styles.field}>
           <span>
@@ -280,37 +299,39 @@ function CreateProductForm({
           {errors.brand_name ? <small>{errors.brand_name.message}</small> : null}
         </label>
 
-        <label className={styles.field}>
-          <span>
-            Product Category <b aria-hidden="true">*</b>
-          </span>
-          <select
-            aria-invalid={errors.product_category_id ? "true" : "false"}
-            disabled={isCategoriesLoading || isCategoriesError}
-            {...register("product_category_id", {
-              required: "Product category id is required",
-            })}
-          >
-            <option value="">
-              {isCategoriesLoading
-                ? "Loading categories..."
-                : isCategoriesError
-                  ? "Unable to load categories"
-                  : "Select category"}
-            </option>
-            {productCategories.map((category) => (
-              <option
-                key={category.product_category_id}
-                value={category.product_category_id}
-              >
-                {category.product_category_name}
+        {hideCatalogFields ? null : (
+          <label className={styles.field}>
+            <span>
+              Product Category <b aria-hidden="true">*</b>
+            </span>
+            <select
+              aria-invalid={errors.product_category_id ? "true" : "false"}
+              disabled={isCategoriesLoading || isCategoriesError}
+              {...register("product_category_id", {
+                required: "Product category id is required",
+              })}
+            >
+              <option value="">
+                {isCategoriesLoading
+                  ? "Loading categories..."
+                  : isCategoriesError
+                    ? "Unable to load categories"
+                    : "Select category"}
               </option>
-            ))}
-          </select>
-          {errors.product_category_id ? (
-            <small>{errors.product_category_id.message}</small>
-          ) : null}
-        </label>
+              {productCategories.map((category) => (
+                <option
+                  key={category.product_category_id}
+                  value={category.product_category_id}
+                >
+                  {category.product_category_name}
+                </option>
+              ))}
+            </select>
+            {errors.product_category_id ? (
+              <small>{errors.product_category_id.message}</small>
+            ) : null}
+          </label>
+        )}
 
         <label className={`${styles.field} ${styles.fullField}`}>
           <span>Description</span>
@@ -476,26 +497,28 @@ function CreateProductForm({
                 </select>
               </label>
 
-              <label className={styles.field}>
-                <span>
-                  Price <b aria-hidden="true">*</b>
-                </span>
-                <input
-                  type="number"
-                  min="0"
-                  step="any"
-                  aria-invalid={
-                    errors.variants?.[index]?.price ? "true" : "false"
-                  }
-                  {...register(`variants.${index}.price`, {
-                    required: "Price is required",
-                    valueAsNumber: true,
-                  })}
-                />
-                {errors.variants?.[index]?.price ? (
-                  <small>{errors.variants[index].price.message}</small>
-                ) : null}
-              </label>
+              {isRewardProduct ? null : (
+                <label className={styles.field}>
+                  <span>
+                    Price <b aria-hidden="true">*</b>
+                  </span>
+                  <input
+                    type="number"
+                    min="0"
+                    step="any"
+                    aria-invalid={
+                      errors.variants?.[index]?.price ? "true" : "false"
+                    }
+                    {...register(`variants.${index}.price`, {
+                      required: "Price is required",
+                      valueAsNumber: true,
+                    })}
+                  />
+                  {errors.variants?.[index]?.price ? (
+                    <small>{errors.variants[index].price.message}</small>
+                  ) : null}
+                </label>
+              )}
 
               <label className={styles.field}>
                 <span>
@@ -527,31 +550,80 @@ function CreateProductForm({
               </label>
 
               <label className={styles.field}>
-                <span>Product Quantity</span>
+                <span>
+                  Product Quantity
+                  {isRewardProduct ? <b aria-hidden="true">*</b> : null}
+                </span>
                 <input
                   type="number"
                   min="0"
-                  {...register(`variants.${index}.product_quantity`)}
+                  aria-invalid={
+                    errors.variants?.[index]?.product_quantity
+                      ? "true"
+                      : "false"
+                  }
+                  {...register(`variants.${index}.product_quantity`, {
+                    required: isRewardProduct
+                      ? "Product quantity is required"
+                      : false,
+                    valueAsNumber: true,
+                  })}
                 />
+                {errors.variants?.[index]?.product_quantity ? (
+                  <small>
+                    {errors.variants[index].product_quantity.message}
+                  </small>
+                ) : null}
               </label>
 
-              <label className={styles.field}>
-                <span>Available Quantity</span>
-                <input
-                  type="number"
-                  min="0"
-                  {...register(`variants.${index}.available_quantity`)}
-                />
-              </label>
+              {isRewardProduct ? (
+                <label className={styles.field}>
+                  <span>
+                    Reward Tokens Required <b aria-hidden="true">*</b>
+                  </span>
+                  <input
+                    type="number"
+                    min="0"
+                    aria-invalid={
+                      errors.variants?.[index]?.reward_tokens_required
+                        ? "true"
+                        : "false"
+                    }
+                    {...register(`variants.${index}.reward_tokens_required`, {
+                      required: "Reward tokens required is required",
+                      valueAsNumber: true,
+                    })}
+                  />
+                  {errors.variants?.[index]?.reward_tokens_required ? (
+                    <small>
+                      {
+                        errors.variants[index].reward_tokens_required
+                          .message
+                      }
+                    </small>
+                  ) : null}
+                </label>
+              ) : (
+                <label className={styles.field}>
+                  <span>Available Quantity</span>
+                  <input
+                    type="number"
+                    min="0"
+                    {...register(`variants.${index}.available_quantity`)}
+                  />
+                </label>
+              )}
 
-              <label className={styles.field}>
-                <span>Reserved Quantity</span>
-                <input
-                  type="number"
-                  min="0"
-                  {...register(`variants.${index}.reserved_quantity`)}
-                />
-              </label>
+              {isRewardProduct ? null : (
+                <label className={styles.field}>
+                  <span>Reserved Quantity</span>
+                  <input
+                    type="number"
+                    min="0"
+                    {...register(`variants.${index}.reserved_quantity`)}
+                  />
+                </label>
+              )}
             </div>
           </div>
         ))}
@@ -563,7 +635,7 @@ function CreateProductForm({
           className={styles.submitButton}
           disabled={!isValid || isSubmitting || isImageUploading}
         >
-          {isSubmitting ? "Creating..." : "Create Product"}
+          {isSubmitting ? "Creating..." : submitLabel}
         </button>
       </div>
     </form>

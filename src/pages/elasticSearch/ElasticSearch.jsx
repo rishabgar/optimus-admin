@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import DataTable from "../components/DataTable/DataTable";
+import DataTable from "../../components/DataTable/DataTable";
 import {
   clearIndexedProducts,
   deleteIndexedProduct,
   getIndexedProducts,
-} from "../services/api/elasticSearch";
-import Portal from "../utils/portal";
+} from "../../services/api/elasticSearch";
+import Portal from "../../utils/portal";
 import styles from "./ElasticSearch.module.css";
 
 const SIX_HOURS = 6 * 60 * 60 * 1000;

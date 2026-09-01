@@ -3,14 +3,15 @@ import { createBrowserRouter } from "react-router";
 import App from "../App";
 import ProtectedRoute from "./ProtectedRoute";
 
-const Home = lazy(() => import("../pages/Home"));
-const Login = lazy(() => import("../pages/Login"));
-const NotFound = lazy(() => import("../pages/NotFound"));
-const Users = lazy(() => import("../pages/Users"));
-const Signup = lazy(() => import("../pages/Signup"));
-const Products = lazy(() => import("../pages/Products"));
-const Coupons = lazy(() => import("../pages/Coupons"));
-const ElasticSearch = lazy(() => import("../pages/ElasticSearch"));
+const Home = lazy(() => import("../pages/home/Home"));
+const Login = lazy(() => import("../pages/login/Login"));
+const NotFound = lazy(() => import("../pages/notFound/NotFound"));
+const Users = lazy(() => import("../pages/users/Users"));
+const Signup = lazy(() => import("../pages/signup/Signup"));
+const Products = lazy(() => import("../pages/products/Products"));
+const Coupons = lazy(() => import("../pages/coupons/Coupons"));
+const Reward = lazy(() => import("../pages/rewardProducts/reward"));
+const ElasticSearch = lazy(() => import("../pages/elasticSearch/ElasticSearch"));
 
 function withSuspense(element) {
   return (
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
           {
             path: "coupons",
             element: withSuspense(<Coupons />),
+          },
+          {
+            path: "reward",
+            element: withSuspense(<Reward />),
           },
           {
             path: "elastic-search",
